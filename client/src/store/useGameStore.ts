@@ -2,12 +2,12 @@ import { create } from 'zustand'
 import { sentences } from "@/sentences"
 
 type State = {
-  currentText: string
+  currentText: Record<string, string | number | Record<string, string>>,
   BASEPOINTS: number,
   currentWord: string
   showAnimation: number[]
   showPointsAnimation: boolean
-  status: "playing" | "finished"
+  status: "ready" | "playing" | "finished"
   soundCounter: number
   gameData: {
     points: number
@@ -24,6 +24,7 @@ type State = {
 }
 
 type Actions = {
+  setCurrentText: (currentText: Record<string, string | number | Record<string, string>>) => void,
   setStatus: (status: State["status"]) => void
   setCurrentWord: (word: string) => void
   incrementSoundCounter: () => void
@@ -49,13 +50,13 @@ type Actions = {
   setShowAnimation: (showAnimation: number[]) => void
 }
 export const useGameStore = create<State & Actions>() ((set, get) => ({
-  currentText: sentences[Math.floor(Math.random() * sentences.length)].en as string,
+  currentText: sentences[Math.floor(Math.random() * sentences.length)],
   BASEPOINTS: 2,
   currentWord: "",
   showPointsAnimation: false,
   showAnimation: [],
   soundCounter: 0,
-  status: "finished",
+  status: "ready",
   gameData: {
     points: 0
   },
@@ -68,6 +69,7 @@ export const useGameStore = create<State & Actions>() ((set, get) => ({
   currentStreak: 0,
   goodLetters: [],
   badLetters: new Set([]),
+  setCurrentText: (currentText: Record<string, string | number | Record<string, string>>) => (set({currentText})),
   setStatus: (status) => ( set({ status }) ),
   setCurrentWord: (currentWord: string) => ( set({ currentWord }) ),
   incrementSoundCounter: () => ( set({soundCounter: get().soundCounter + 1}) ),
@@ -75,7 +77,23 @@ export const useGameStore = create<State & Actions>() ((set, get) => ({
   startGame: () => set({ status: "playing" }),
   stopGame: () => set({ status: "finished" }),
   resetGame: () => {
-    const { setLetterCounter, setWordCounter, stopGame, stopClock, resetClock, resetWordPoints, setActualHistory, resetPoints, setCurrentStreak, setGoodLetters, setBadLetters, setShowAnimation, setCurrentWord } = get()
+    const { 
+      setCurrentText,
+      setLetterCounter, 
+      setWordCounter, 
+      stopGame, 
+      stopClock, 
+      resetClock, 
+      resetWordPoints, 
+      setActualHistory, 
+      resetPoints, 
+      setCurrentStreak, 
+      setGoodLetters, 
+      setBadLetters, 
+      setShowAnimation, 
+      setCurrentWord 
+    } = get()
+
     setLetterCounter(0)
     setWordCounter(0)
     stopGame()
@@ -89,7 +107,8 @@ export const useGameStore = create<State & Actions>() ((set, get) => ({
     setBadLetters(new Set([]))
     setShowAnimation([])
     setCurrentWord("")
-    set({ status: "finished", clock: [0,0] })
+    set({ status: "ready", clock: [0,0] })
+    setCurrentText(sentences[Math.floor(Math.random() * sentences.length)])
   },
   startClock: () => {
     const interval = setInterval(() => {

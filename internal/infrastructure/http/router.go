@@ -8,7 +8,10 @@ import (
 )
 
 func NewRouter(statisticHandler *handler.StatisticHanlder, userHandler *handler.UserHandler) *fiber.App {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		EnablePrintRoutes: true,
+		BodyLimit:         10 * 1024 * 1024,
+	})
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "http://localhost:5173",
 		AllowMethods:     "GET, POST, PUT, PATCH, DELETE",
@@ -19,6 +22,7 @@ func NewRouter(statisticHandler *handler.StatisticHanlder, userHandler *handler.
 	api := app.Group("/api/v1")
 	api.Post("/login", userHandler.Login)
 	api.Post("/register", userHandler.Register)
+	api.Get("/users/search_query/:content", userHandler.SearchQuery)
 
 	registerUserRoutes(api, userHandler)
 	registerStatisticRoutes(api, statisticHandler)
@@ -38,7 +42,9 @@ func registerStatisticRoutes(router fiber.Router, h *handler.StatisticHanlder) {
 
 func registerUserRoutes(router fiber.Router, h *handler.UserHandler) {
 	users := router.Group("/users", middleware.AuthMiddleware)
-	users.Get("/", h.FindAll)
 	users.Get("/me", h.Me)
 	users.Patch("/:id", h.Update)
+	users.Get("/query", h.SearchQuery)
+	users.Post("/upload_profile_picture/:id", h.UploadProfilePicture)
+	users.Get("/getProfileImage/:filename", h.GetProfileImage)
 }

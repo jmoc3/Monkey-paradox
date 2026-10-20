@@ -8,7 +8,7 @@ export const WelcomeSide : FC = () => {
   const { status } = useGameStore()
 
   const mazeLink = () => {
-    if(status != 'finished') return
+    if(true) return
     toast.info("📋 Link copied", {position: "top-center", duration: 500})
     // Logic to copy room
   }
@@ -19,7 +19,11 @@ export const WelcomeSide : FC = () => {
       <p>
         Puedes jugar solo e intentar batir tu récord personal, o jugar con amigos... <b>Invítalos!!</b>
       </p>
-      <button tabIndex={2} onClick={mazeLink} className={`rounded py-2 ${status == "finished" ? 'cursor-pointer bg-blue-200 text-blue-800 hover:bg-blue-900 hover:text-blue-100 hover:font-bold duration-100 transition' : 'bg-gray-200 text-gray-800'}`}>Type link</button>
+      <button 
+        tabIndex={2} 
+        onClick={mazeLink} 
+        className={`rounded py-2 ${false ? 'cursor-pointer bg-blue-200 text-blue-800 hover:bg-blue-900 hover:text-blue-100 hover:font-bold duration-100 transition' : 'bg-gray-200 text-gray-800'}`}>Type link</button>
+      <span className="m-auto text-xs opacity-50">Desactivado mientras se implementa multiplayer</span>
     </div>
   )
 }

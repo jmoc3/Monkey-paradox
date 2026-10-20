@@ -12,12 +12,11 @@ import (
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
 func AuthMiddleware(c *fiber.Ctx) error {
-
+	fmt.Printf("> AuthMiddleware activated \n")
 	token := c.Cookies("token")
 	if token == "" {
 		return c.Status(401).JSON(fiber.Map{"msg": "Token Requerido", "status": false})
 	}
-
 	c.Locals("token", token)
 
 	claims, err := validarToken(token)
@@ -29,11 +28,13 @@ func AuthMiddleware(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func GenerateToken(userId string, email string) (string, error) {
+func GenerateToken(userId string, email string, name string, dateOfBirth string) (string, error) {
 	claims := jwt.MapClaims{
-		"user_id": userId,
-		"email":   email,
-		"exp":     time.Now().Add(time.Hour * 24).Unix(),
+		"user_id":       userId,
+		"name":          name,
+		"email":         email,
+		"date_of_birth": userId,
+		"exp":           time.Now().Add(time.Hour * 24).Unix(),
 	}
 
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(jwtSecret)

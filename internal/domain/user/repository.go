@@ -11,6 +11,7 @@ type Repository interface {
 	Save(ctx context.Context, user SaveUserDTO) (*UserBase, error)
 	Update(ctx context.Context, id int, user UpdateUserRequest) (int, error)
 	Delete(ctx context.Context, id string) (*UserBase, error)
+	UploadProfilePicture(ctx context.Context, id int, file string) (bool, error)
 }
 
 type User struct {

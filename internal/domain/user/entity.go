@@ -11,10 +11,11 @@ var (
 )
 
 type UserBase struct {
-	Id          int
-	Name        string
-	DateOfBirth time.Time
-	Email       string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	Id          int       `json:"id"`
+	Name        string    `json:"name"`
+	DateOfBirth time.Time `json:"date_of_birth"`
+	Email       string    `json:"email"`
+	UrlImage    string    `json:"url_image"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }

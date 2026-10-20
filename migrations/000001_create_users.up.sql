@@ -3,6 +3,7 @@ CREATE TABLE users (
   name VARCHAR(100) NOT NULL,
   date_of_birth DATE NOT NULL CHECK (AGE(users.date_of_birth) > '12 years'),
   email VARCHAR(150) UNIQUE NOT NULL,
+  url_image TEXT DEFAULT '' ,
   password VARCHAR(60) NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

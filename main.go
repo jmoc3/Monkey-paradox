@@ -38,7 +38,7 @@ func main() {
 	postgres_cli := database.NewPostgressConnection(POSTGRES_URI)
 	defer postgres_cli.Conn.Close(context.Background())
 
-	statisticRepo := mongo.NewStatisticRepository(mongo_client)
+	statisticRepo := mongo.NewStatisticRepository(mongo_client, postgres_cli)
 	statisticService := statistic.NewService(statisticRepo)
 	statisticHandler := handler.NewStatisticHandler(statisticService)
 

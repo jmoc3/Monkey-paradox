@@ -40,7 +40,9 @@ func (r UserRepository) FindAll(ctx context.Context) ([]user.UserBase, error) {
 
 func (r UserRepository) FindOne(ctx context.Context, id string) (*user.UserBase, error) {
 	var user user.UserBase
-	err := r.db.Conn.QueryRow(ctx, "SELECT id, date_of_birth, name, email, created_at, updated_at FROM users WHERE id = $1", id).Scan(&user.Id, &user.DateOfBirth, &user.Name, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+
+	err := r.db.Conn.QueryRow(ctx, "SELECT id, date_of_birth, name, email, url_image, created_at, updated_at FROM users WHERE id = $1;", id).Scan(&user.Id, &user.DateOfBirth, &user.Name, &user.Email, &user.UrlImage, &user.CreatedAt, &user.UpdatedAt)
+
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +61,9 @@ func (r UserRepository) FindBy(ctx context.Context, fields []string, table strin
 	}
 	var response []map[string]any
 
-	rows, err := r.db.Conn.Query(ctx, fmt.Sprintf("SELECT %s FROM %s WHERE %s", fieldString, table, filter))
+	fmt.Printf("waa: %v \n", fmt.Sprintf("SELECT %s FROM %s WHERE %s", fieldString, table, filter))
+
+	rows, err := r.db.Conn.Query(ctx, fmt.Sprintf("SELECT %s FROM %s WHERE %s;", fieldString, table, filter))
 	if err != nil {
 		return nil, err
 	}
@@ -141,4 +145,12 @@ func (r UserRepository) Delete(ctx context.Context, id string) (*user.UserBase, 
 	}
 
 	return &user, nil
+}
+
+func (r UserRepository) UploadProfilePicture(ctx context.Context, id int, file string) (bool, error) {
+	_, err := r.db.Conn.Exec(ctx, "UPDATE users SET url_image = $1 WHERE id = $2", file, id)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }

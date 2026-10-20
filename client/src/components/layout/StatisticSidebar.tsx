@@ -29,7 +29,7 @@ export const StatisticSidebar : FC = () => {
   })
   return (
     <div className="flex flex-col w-[40%] gap-6">
-      <div className="flex flex-col items-center justify-center gap-2 w-fit h-26 bg-white rounded px-6">
+      <div className="flex flex-col relative items-center justify-center gap-2 w-fit h-26 bg-white rounded px-6">
         <h2 className="flex items-center gap-4 font-bold">
           Tiempo
           <button 

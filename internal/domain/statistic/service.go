@@ -10,7 +10,7 @@ func NewService(repo Repository) *Service {
 	return &Service{repo: repo}
 }
 
-func (s *Service) FindAll(ctx context.Context) ([]*Statistic, error) {
+func (s *Service) FindAll(ctx context.Context) ([]*StatisticWithUser, error) {
 	statistics, err := s.repo.FindAll(ctx)
 	if err != nil {
 		return statistics, err

@@ -3,6 +3,7 @@ type UserBase = {
   name: string,
   age: number,
   email: string,
+  url_image: string,
   updatedAt: Date,
   createdAt: Date
 }
@@ -12,6 +13,8 @@ type UserStatistics = {
   time: string,
   wpm: number,
   cpm: number,
+  points: number,
+  quote: number,
   updatedAt: Date,
   createdAt: Date
 }

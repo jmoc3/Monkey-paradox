@@ -8,12 +8,12 @@ const DEFAULT_USER = {
 }
 
 type State = {
-  user: Record<string,string>,
+  user: Record<string,string | boolean>,
   loading: boolean
 }
 
 type Actions = {
-  setUser: (user: {name:string} | LoginDTO) => void,
+  setUser: (user: { name:string, url_image: string, url_image_loaded: boolean } | LoginDTO) => void,
   me: () => void
   register: (user: RegisterDTO) => Promise<Record<string, boolean>>
   login: (user: LoginDTO) => Promise<Record<string, string | boolean>>
@@ -22,7 +22,7 @@ type Actions = {
 export const useAuthStore = create<State & Actions>() ((set) => ({
   user: DEFAULT_USER,
   loading: false,
-  setUser: (user: {name:string} | LoginDTO) => set({ user }),
+  setUser: (user: { name:string, url_image: string, url_image_loaded: boolean } | LoginDTO) => set({ user }),
   me: async () => {
     set({ loading: true })
     try{
@@ -45,7 +45,6 @@ export const useAuthStore = create<State & Actions>() ((set) => ({
   },
   login: async (user) => {
     const res = await apiFetch("/login","POST", user)
-    
     return await res.json()
   }
 

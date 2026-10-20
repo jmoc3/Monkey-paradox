@@ -2,9 +2,12 @@ package user
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
+	"time"
 
 	"github.com/jmoc3/Social-Network.git/internal/infrastructure/http/middleware"
 	"golang.org/x/crypto/bcrypt"
@@ -36,6 +39,15 @@ func (s *Service) FindOne(ctx context.Context, id string) (*UserBase, error) {
 	}
 
 	return user, nil
+}
+
+func (s *Service) SearchQuery(ctx context.Context, content string) ([]map[string]any, error) {
+	records, err := s.repo.FindBy(ctx, []string{"id", "name", "email", "date_of_birth", "url_image"}, "users", "name ILIKE "+"'%"+content+"%'")
+	if err != nil {
+		return nil, err
+	}
+
+	return records, nil
 }
 
 func (s *Service) Register(ctx context.Context, body RegisterDTO) (bool, error) {
@@ -78,7 +90,7 @@ func (s *Service) Register(ctx context.Context, body RegisterDTO) (bool, error) 
 func (s *Service) Login(ctx context.Context, body LoginDTO) (string, error) {
 	filter := fmt.Sprintf("email = '%s'", body.Email)
 
-	rows, err := s.repo.FindBy(ctx, []string{"id", "password"}, "users", filter)
+	rows, err := s.repo.FindBy(ctx, []string{"id", "name", "date_of_birth", "password"}, "users", filter)
 	if err != nil {
 		return "", err
 	}
@@ -94,8 +106,7 @@ func (s *Service) Login(ctx context.Context, body LoginDTO) (string, error) {
 	if !equalPsw {
 		return "", errors.New("Contraseña incorrecta")
 	}
-
-	token, err := middleware.GenerateToken(fmt.Sprint(rows[0]["id"]), body.Email)
+	token, err := middleware.GenerateToken(fmt.Sprint(rows[0]["id"]), body.Email, fmt.Sprint(rows[0]["name"]), fmt.Sprint(rows[0]["date_of_birth"]))
 
 	if err != nil {
 		return "", fmt.Errorf("Error generando el token: %w", err)
@@ -129,4 +140,24 @@ func (s *Service) Delete(ctx context.Context, id string) (*UserBase, error) {
 	}
 
 	return user, nil
+}
+
+func (s *Service) UploadProfilePicture(ctx context.Context, id int, file string) (bool, error) {
+	decoded, err := base64.StdEncoding.DecodeString(file)
+	if err != nil {
+		return false, err
+	}
+
+	os.MkdirAll("uploads", os.ModePerm)
+	filename := fmt.Sprintf("uploads/%d.png", time.Now().Unix())
+
+	ok, err := s.repo.UploadProfilePicture(ctx, id, filename)
+	if err != nil {
+		return false, err
+	}
+	if err := os.WriteFile(filename, decoded, 0644); err != nil {
+		return false, err
+	}
+
+	return ok, nil
 }
