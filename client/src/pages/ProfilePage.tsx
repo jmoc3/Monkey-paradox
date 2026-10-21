@@ -95,7 +95,7 @@ export const ProfilePage: FC = () => {
                   <span className="font-bold">#1</span>
                 </div>
                 <span className="text-sm opacity-50">{ user.email }</span>
-                <span className="text-sm opacity-50">Alias: beginner</span>
+                <span className="text-sm opacity-50">Alias: Nuke</span>
               </div>
             </div>
             <div className="grid text-sm">
